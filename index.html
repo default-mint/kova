@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kova | Daily Wellness & Personal Care Essentials</title>
+<meta name="description" content="Kova is a bright, everyday health and personal-care shop. A once-daily multivitamin, plus a short, honest set of everyday personal-care devices. The basics, done well. Every day.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700;800&family=Albert+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ───────────────────────────────────────────────
+     KOVA. Court Report Filmstrip (structure reused
+     from Baseline per explicit user approval; fully
+     restyled). Daily wellness + personal-care store.
+     Design intent: clean, bright, everyday. A hero
+     Daily Multivitamin spotlight band, then horizontal
+     scroll-snap category FILMSTRIPS (Supplements /
+     Personal Care), product modal, right cart drawer.
+     Palette: warm white #FCFBF8, green-ink #1B2421,
+     sage-mint #5FB89A, soft mint wash #E6F2EC, warm
+     coral accent #FF6F5E. Backgrounds never flat.
+     Type: Gabarito (display) + Albert Sans (body).
+     Voice: warm, plain, encouraging, everyday.
+     ─────────────────────────────────────────────── */
+  :root {
+    --mint: #5FB89A;
+    --mint-deep: #3E8E73;
+    --mint-soft: #E6F2EC;
+    --white: #FCFBF8;
+    --paper: #FFFFFF;
+    --coral: #FF6F5E;
+    --ink: #1B2421;
+    --ink-soft: rgba(27, 36, 33, 0.62);
+    --line: rgba(27, 36, 33, 0.13);
+    --line-soft: rgba(27, 36, 33, 0.06);
+    --error: #C0463F;
+    --display: 'Gabarito', system-ui, sans-serif;
+    --body: 'Albert Sans', system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--body);
+    color: var(--ink);
+    background: var(--white);
+    line-height: 1.6;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+  /* ───── Banners ───── */
+  .b-help {
+    background: var(--paper); color: var(--ink);
+    padding: 7px 16px; text-align: center;
+    font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 600;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .b-help a { color: var(--mint-deep); font-weight: 600; margin-left: 8px; }
+  .b-help a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  .b-loud {
+    background: var(--coral); color: #fff;
+    text-align: center; font-size: 12.5px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700;
+    overflow: hidden; position: relative;
+  }
+  .b-loud::before, .b-loud::after { content:''; position:absolute; top:0; bottom:0; width:60px; z-index:2; pointer-events:none; }
+  .b-loud::before { left:0; background: linear-gradient(to right, var(--coral), transparent); }
+  .b-loud::after { right:0; background: linear-gradient(to left, var(--coral), transparent); }
+  .b-loud-track { position: relative; height: 40px; }
+  .loud-msg { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; white-space:nowrap; opacity:0; transform:translateY(8px); transition:opacity .5s ease, transform .55s cubic-bezier(.2,.7,.2,1); padding:0 16px; }
+  .loud-msg.active { opacity:1; transform:translateY(0); }
+  .loud-msg .dot { display:inline-block; width:7px; height:7px; border-radius:999px; background:#fff; margin-right:12px; vertical-align:middle; animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{ transform: scale(1); opacity:1;} 50%{ transform: scale(1.5); opacity:.5;} }
+
+  .b-info {
+    background: var(--ink); color: var(--white);
+    padding: 8px 16px; text-align: center;
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 500;
+  }
+  .b-info-track { display:flex; justify-content:center; align-items:center; gap:14px; flex-wrap:wrap; }
+  .b-info-track .sep { color: var(--mint); opacity: .85; }
+  @media (max-width: 700px) {
+    .b-help, .b-info { font-size: 10px; letter-spacing: 0.1em; }
+    .b-loud { font-size: 10.5px; letter-spacing: 0.08em; }
+    .b-loud-track { height: 36px; }
+    .b-loud::before, .b-loud::after { width: 24px; }
+  }
+
+  /* ───── Nav ───── */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px clamp(18px, 4vw, 56px);
+    background: rgba(252, 251, 248, 0.88);
+    backdrop-filter: saturate(150%) blur(10px);
+    -webkit-backdrop-filter: saturate(150%) blur(10px);
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .wordmark {
+    font-family: var(--display); font-weight: 700;
+    font-size: 25px; letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .wordmark .mk-leaf { width: 16px; height: 16px; display:inline-block; color: var(--mint); }
+  .navlinks { display: flex; gap: clamp(14px, 2.2vw, 30px); font-size: 13px; font-weight: 500; }
+  .navlinks a { transition: color .2s; }
+  .navlinks a:hover { color: var(--mint-deep); }
+  .bag-btn { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; }
+  .bag-count {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 22px; height: 22px; padding: 0 6px;
+    background: var(--mint); color: #fff; border-radius: 999px;
+    font-size: 11px; font-weight: 700;
+  }
+  .bag-count.empty { background: var(--line); color: var(--ink-soft); }
+  @media (max-width: 820px) { .navlinks { display: none; } }
+
+  /* ───── Hero ───── */
+  .hero {
+    position: relative;
+    min-height: clamp(440px, 72vh, 660px);
+    display: flex; align-items: flex-end;
+    overflow: hidden;
+    color: #fff;
+  }
+  .hero img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center 32%;
+    z-index: 0;
+  }
+  .hero::after {
+    content: ''; position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(to top, rgba(20,30,27,0.80) 0%, rgba(20,30,27,0.30) 48%, rgba(20,30,27,0.10) 100%);
+  }
+  .hero-inner {
+    position: relative; z-index: 2;
+    padding: clamp(28px, 5vw, 64px) clamp(18px, 4vw, 56px) clamp(36px, 5vw, 64px);
+    max-width: 760px;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; font-weight: 600;
+    color: #fff;
+    background: rgba(95,184,154,0.42);
+    padding: 6px 14px; border-radius: 999px;
+    backdrop-filter: blur(4px);
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(40px, 7vw, 82px);
+    line-height: 0.98; letter-spacing: -0.02em;
+    margin-bottom: 18px;
+  }
+  .hero h1 .line2 { color: #C9EBDD; }
+  .hero p { font-size: clamp(15px, 1.6vw, 18px); max-width: 520px; color: rgba(255,255,255,0.92); margin-bottom: 26px; }
+  .hero-cta { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-weight: 600; font-size: 14px;
+    padding: 15px 28px; border-radius: 999px;
+    transition: transform .2s, background .2s, color .2s;
+  }
+  .btn-primary { background: var(--mint); color: #fff; }
+  .btn-primary:hover { transform: translateY(-2px); background: var(--mint-deep); }
+  .btn-ghost { background: rgba(255,255,255,0.14); color:#fff; border: 1px solid rgba(255,255,255,0.55); }
+  .btn-ghost:hover { background: rgba(255,255,255,0.24); }
+
+  /* ───── Section frame ───── */
+  .section { padding: clamp(48px, 7vw, 92px) clamp(18px, 4vw, 56px); }
+  .sec-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: clamp(22px, 3vw, 36px); max-width: 1320px; margin-left:auto; margin-right:auto; }
+  .sec-kicker { font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; font-weight: 700; color: var(--mint-deep); margin-bottom: 10px; }
+  .sec-title { font-family: var(--display); font-weight: 700; font-size: clamp(30px, 4.4vw, 52px); line-height: 1; letter-spacing: -0.01em; }
+  .sec-note { font-size: 13px; color: var(--ink-soft); max-width: 320px; }
+
+  /* ───── Multivitamin spotlight ───── */
+  .spotlight {
+    background:
+      radial-gradient(circle at 12% 18%, rgba(255,111,94,0.10), transparent 42%),
+      radial-gradient(circle at 88% 82%, rgba(255,255,255,0.10), transparent 40%),
+      linear-gradient(135deg, var(--mint) 0%, var(--mint-deep) 100%);
+    color: #fff;
+    padding: clamp(48px, 7vw, 96px) clamp(18px, 4vw, 56px);
+    position: relative; overflow: hidden;
+  }
+  .spot-grid {
+    max-width: 1180px; margin: 0 auto;
+    display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(32px, 5vw, 72px);
+    align-items: center; position: relative; z-index: 1;
+  }
+  @media (max-width: 880px) { .spot-grid { grid-template-columns: 1fr; } }
+  .spot-imgwrap {
+    background: var(--white); border-radius: 22px;
+    padding: 18px; aspect-ratio: 1/1; max-width: 420px; width: 100%;
+    margin: 0 auto;
+    box-shadow: 0 24px 60px rgba(20,40,33,0.28);
+  }
+  .spot-imgwrap img { width: 100%; height: 100%; object-fit: contain; border-radius: 12px; }
+  .spot-kicker { display:inline-flex; align-items:center; gap:8px; font-size: 11px; letter-spacing: 0.24em; text-transform: uppercase; font-weight: 700; color: #fff; background: rgba(255,255,255,0.2); padding: 5px 12px; border-radius:999px; margin-bottom: 16px; }
+  .spot-title { font-family: var(--display); font-weight: 700; font-size: clamp(34px, 5vw, 58px); line-height: 0.98; letter-spacing: -0.01em; margin-bottom: 16px; }
+  .spot-lead { font-size: clamp(15px, 1.5vw, 17px); color: rgba(255,255,255,0.94); margin-bottom: 22px; max-width: 520px; }
+  .spot-benefits { list-style: none; display: grid; gap: 10px; margin-bottom: 22px; max-width: 540px; }
+  .spot-benefits li { display: flex; gap: 12px; font-size: 14px; color: rgba(255,255,255,0.96); }
+  .spot-benefits li::before { content:''; flex-shrink:0; margin-top: 7px; width: 8px; height: 8px; border-radius: 999px; background: var(--coral); }
+  .spot-ing { font-size: 12.5px; color: rgba(255,255,255,0.82); letter-spacing: 0.02em; margin-bottom: 26px; max-width: 540px; }
+  .spot-ing strong { color: #fff; font-weight: 600; }
+  .spot-price { font-family: var(--display); font-weight: 700; font-size: 30px; }
+  .spot-price span { font-size: 13px; font-weight: 400; color: rgba(255,255,255,0.78); font-family: var(--body); }
+  .spot-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .spot-actions .btn-primary { background: var(--coral); }
+  .spot-actions .btn-primary:hover { background: #e85a4a; }
+  .spot-actions .btn-pack { background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.55); color:#fff; }
+  .spot-actions .btn-pack:hover { background: rgba(255,255,255,0.26); }
+  .spot-disc { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 18px; max-width: 540px; line-height: 1.55; }
+
+  /* ───── Filmstrips ───── */
+  .strip-wrap { max-width: 1320px; margin: 0 auto; }
+  .strip {
+    display: flex; gap: 20px;
+    overflow-x: auto; overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    padding: 6px 4px 22px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin; scrollbar-color: var(--mint) var(--mint-soft);
+  }
+  .strip::-webkit-scrollbar { height: 8px; }
+  .strip::-webkit-scrollbar-track { background: var(--mint-soft); border-radius: 999px; }
+  .strip::-webkit-scrollbar-thumb { background: var(--mint); border-radius: 999px; }
+  .pcard {
+    flex: 0 0 clamp(230px, 30vw, 300px);
+    scroll-snap-align: start;
+    background: var(--paper);
+    border: 1px solid var(--line-soft);
+    border-radius: 16px; overflow: hidden;
+    cursor: pointer;
+    display: flex; flex-direction: column;
+    transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s;
+  }
+  .pcard:hover { transform: translateY(-5px); box-shadow: 0 16px 36px rgba(27,36,33,0.12); }
+  .pcard-img { aspect-ratio: 1/1; background: var(--mint-soft); overflow: hidden; position: relative; }
+  .pcard-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s cubic-bezier(.2,.7,.2,1); }
+  .pcard:hover .pcard-img img { transform: scale(1.05); }
+  .pcard-tag {
+    position: absolute; top: 12px; left: 12px;
+    background: var(--ink); color:#fff;
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;
+    padding: 5px 10px; border-radius: 999px;
+  }
+  .pcard-add {
+    position: absolute; bottom: 12px; right: 12px;
+    width: 40px; height: 40px; border-radius: 999px;
+    background: var(--coral); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 600; line-height: 1;
+    opacity: 0; transform: translateY(6px); transition: opacity .25s, transform .25s, background .2s;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+  }
+  .pcard:hover .pcard-add { opacity: 1; transform: translateY(0); }
+  .pcard-add:hover { background: #e85a4a; }
+  .pcard-body { padding: 16px 16px 18px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .pcard-name { font-family: var(--display); font-weight: 600; font-size: 19px; line-height: 1.1; }
+  .pcard-kind { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--mint-deep); font-weight: 600; }
+  .pcard-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.5; flex: 1; }
+  .pcard-price { font-family: var(--display); font-weight: 700; font-size: 17px; margin-top: 4px; }
+  .strip-hint { font-size: 11px; color: var(--ink-soft); letter-spacing: 0.1em; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+  .strip-hint .arrow { animation: nudge 1.6s ease-in-out infinite; }
+  @keyframes nudge { 0%,100%{ transform: translateX(0);} 50%{ transform: translateX(5px);} }
+
+  .strips-section { background: var(--white); }
+  .strip-block + .strip-block { margin-top: clamp(30px, 4vw, 54px); }
+
+  /* ───── Promise trio ───── */
+  .promise { background: var(--mint-soft); }
+  .promise-inner { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(24px, 4vw, 56px); }
+  @media (max-width: 760px) { .promise-inner { grid-template-columns: 1fr; } }
+  .promise-item .pno { font-family: var(--display); font-weight: 700; font-size: 13px; color: var(--mint-deep); letter-spacing: 0.2em; margin-bottom: 14px; display:block; }
+  .promise-item h4 { font-family: var(--display); font-weight: 600; font-size: 22px; margin-bottom: 10px; }
+  .promise-item p { font-size: 14px; color: var(--ink-soft); line-height: 1.7; }
+
+  /* ───── Reviews ───── */
+  .reviews { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media (max-width: 880px) { .reviews { grid-template-columns: 1fr; } }
+  .review { background: var(--paper); border: 1px solid var(--line-soft); border-radius: 16px; padding: 26px; }
+  .review p { font-size: 15px; line-height: 1.6; margin-bottom: 18px; }
+  .review-by { display: flex; align-items: center; gap: 12px; }
+  .review-by img { width: 42px; height: 42px; border-radius: 999px; object-fit: cover; }
+  .review-by .rb-name { font-weight: 600; font-size: 14px; }
+  .review-by .rb-meta { font-size: 12px; color: var(--ink-soft); }
+
+  /* ───── Footer ───── */
+  footer { background: var(--ink); color: var(--white); padding: clamp(52px, 7vw, 92px) clamp(18px, 4vw, 56px) 30px; }
+  .foot-grid { max-width: 1320px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: clamp(28px, 5vw, 72px); padding-bottom: 44px; border-bottom: 1px solid rgba(255,255,255,0.16); }
+  @media (max-width: 880px) { .foot-grid { grid-template-columns: 1fr 1fr; gap: 30px; } }
+  .foot-mark { font-family: var(--display); font-weight: 700; font-size: 28px; margin-bottom: 14px; display:flex; align-items:center; gap:9px; }
+  .foot-mark .mk-leaf { width: 16px; height: 16px; color: var(--mint); }
+  .foot-blurb { font-size: 13px; line-height: 1.7; color: rgba(255,255,255,0.62); max-width: 300px; }
+  .foot-h { font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--mint); margin-bottom: 16px; font-weight: 700; }
+  .foot-list { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .foot-list a, .foot-list span { font-size: 13px; color: rgba(255,255,255,0.78); transition: color .2s; }
+  .foot-list a:hover { color: #fff; }
+  .foot-disc { max-width: 1320px; margin: 22px auto 0; font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+  .foot-bottom { max-width: 1320px; margin: 14px auto 0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-size: 11px; color: rgba(255,255,255,0.5); letter-spacing: 0.04em; }
+
+  /* ───── Modal ───── */
+  .modal-bg { position: fixed; inset: 0; background: rgba(20,30,27,0.5); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity .28s; z-index: 90; }
+  .modal-bg.open { opacity: 1; pointer-events: auto; }
+  .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, calc(-50% + 24px)); width: min(880px, calc(100vw - 32px)); max-height: calc(100vh - 64px); background: var(--paper); z-index: 91; opacity: 0; pointer-events: none; transition: transform .36s cubic-bezier(.2,.7,.2,1), opacity .28s; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; border-radius: 22px; }
+  .modal.open { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%); }
+  .modal-img { background: var(--mint-soft); overflow: hidden; aspect-ratio: 1/1; }
+  .modal-img img { width: 100%; height: 100%; object-fit: cover; }
+  .modal-info { padding: clamp(24px, 3.4vw, 42px); display: flex; flex-direction: column; overflow-y: auto; }
+  .modal-kind { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mint-deep); font-weight: 600; margin-bottom: 12px; }
+  .modal-name { font-family: var(--display); font-weight: 700; font-size: clamp(28px, 3.6vw, 42px); line-height: 1; margin-bottom: 10px; }
+  .modal-price { font-family: var(--display); font-weight: 700; font-size: 20px; margin-bottom: 20px; }
+  .modal-desc { font-size: 14px; line-height: 1.7; color: var(--ink-soft); margin-bottom: 22px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+  .opt-label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft); font-weight: 600; margin-bottom: 12px; }
+  .opts { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+  .opt-chip { padding: 11px 18px; border: 1px solid var(--line); background: transparent; font-size: 13px; font-weight: 500; border-radius: 999px; transition: all .18s; }
+  .opt-chip:hover { border-color: var(--mint); }
+  .opt-chip.selected { background: var(--mint); color: #fff; border-color: var(--mint); }
+  .modal-supp-note { font-size: 11px; color: var(--ink-soft); line-height: 1.55; margin-bottom: 20px; }
+  .modal-add { background: var(--ink); color: #fff; padding: 16px; font-size: 13px; letter-spacing: 0.06em; font-weight: 600; border-radius: 999px; margin-top: auto; transition: background .2s; }
+  .modal-add:hover { background: var(--mint-deep); }
+  .modal-add:disabled { background: var(--line); color: var(--ink-soft); cursor: not-allowed; }
+  .modal-close { position: absolute; top: 14px; right: 14px; width: 36px; height: 36px; border-radius: 999px; background: var(--paper); display: flex; align-items: center; justify-content: center; z-index: 2; box-shadow: 0 2px 12px rgba(0,0,0,0.14); transition: transform .2s; }
+  .modal-close:hover { transform: rotate(90deg); }
+  @media (max-width: 760px) { .modal { grid-template-columns: 1fr; max-height: 92vh; overflow-y: auto; } .modal-img { aspect-ratio: 16/10; } }
+
+  /* ───── Cart drawer ───── */
+  .cart { position: fixed; top: 0; right: 0; width: min(440px, 92vw); height: 100vh; height: 100dvh; background: var(--white); z-index: 92; transform: translateX(100%); transition: transform .36s cubic-bezier(.2,.7,.2,1); display: flex; flex-direction: column; box-shadow: -2px 0 28px rgba(0,0,0,0.12); }
+  .cart.open { transform: translateX(0); }
+  .cart-header { padding: 22px 24px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+  .cart-title { font-family: var(--display); font-weight: 700; font-size: 22px; }
+  .cart-close { font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+  .cart-close:hover { color: var(--ink); }
+  .cart-items { flex: 1; overflow-y: auto; padding: 4px 24px; }
+  .cart-empty { padding: 70px 0; text-align: center; color: var(--ink-soft); }
+  .cart-empty p { font-family: var(--display); font-weight: 600; font-size: 19px; margin-bottom: 10px; color: var(--ink); }
+  .cart-empty span { font-size: 13px; }
+  .cart-line { display: grid; grid-template-columns: 70px 1fr; gap: 14px; padding: 18px 0; border-bottom: 1px solid var(--line-soft); }
+  .cart-line-img { width: 70px; height: 70px; border-radius: 12px; overflow: hidden; background: var(--mint-soft); }
+  .cart-line-img img { width: 100%; height: 100%; object-fit: cover; }
+  .cart-line-info { display: flex; flex-direction: column; justify-content: space-between; }
+  .cart-line-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .cart-line-name { font-family: var(--display); font-weight: 600; font-size: 16px; line-height: 1.1; }
+  .cart-line-meta { font-size: 11px; color: var(--ink-soft); margin-top: 3px; letter-spacing: 0.04em; }
+  .cart-line-price { font-weight: 600; font-size: 14px; white-space: nowrap; }
+  .cart-line-bottom { display: flex; justify-content: space-between; align-items: center; }
+  .qty { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 999px; padding: 0 4px; }
+  .qty button { width: 26px; height: 26px; color: var(--ink); font-size: 16px; display: flex; align-items: center; justify-content: center; }
+  .qty button:hover { color: var(--mint-deep); }
+  .qty span { padding: 0 8px; font-size: 13px; min-width: 18px; text-align: center; }
+  .cart-remove { font-size: 11px; letter-spacing: 0.06em; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 3px; }
+  .cart-remove:hover { color: var(--error); }
+  .cart-foot { border-top: 1px solid var(--line); padding: 18px 24px 24px; background: var(--paper); }
+  .total-line { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0 14px; }
+  .total-line .tl { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+  .total-line .tv { font-family: var(--display); font-weight: 700; font-size: 28px; }
+  .cart-checkout { width: 100%; background: var(--mint); color: #fff; padding: 17px; font-size: 13px; letter-spacing: 0.06em; font-weight: 600; text-align: center; display: block; border-radius: 999px; transition: background .2s; }
+  .cart-checkout:hover { background: var(--mint-deep); }
+  .cart-hint { font-size: 11px; color: var(--ink-soft); text-align: center; margin-top: 12px; line-height: 1.6; }
+
+  /* ───── Toast ───── */
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(40px); background: var(--ink); color: #fff; padding: 14px 22px; font-size: 13px; font-weight: 500; z-index: 100; opacity: 0; pointer-events: none; transition: opacity .24s, transform .36s cubic-bezier(.2,.7,.2,1); border-radius: 999px; display:flex; align-items:center; gap:10px; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast .ok { width: 18px; height: 18px; border-radius: 999px; background: var(--mint); color: #fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; }
+
+  /* ───── Reveal ───── */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { transition: none; opacity: 1; transform: none; }
+    .loud-msg .dot, .strip-hint .arrow { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="b-help">Need Help? <a href="tel:1231231234">📞 123-123-1234</a></div>
+<div class="b-loud">
+  <div class="b-loud-track">
+    <span class="loud-msg active"><span class="dot"></span>Free Shipping on Orders Over $100</span>
+    <span class="loud-msg"><span class="dot"></span>Daily Multivitamin, 3 Bottles: $240</span>
+    <span class="loud-msg"><span class="dot"></span>Code KOV10 for 10% Off at Checkout</span>
+    <span class="loud-msg"><span class="dot"></span>30-Day Returns on Every Order</span>
+    <span class="loud-msg"><span class="dot"></span>The Basics, Done Well. Every Day.</span>
+  </div>
+</div>
+<div class="b-info">
+  <div class="b-info-track">
+    <span>Free Shipping Over $100</span><span class="sep">·</span>
+    <span>30-Day Returns</span><span class="sep">·</span>
+    <span>US Shipping</span><span class="sep">·</span>
+    <span>Secure Checkout</span>
+  </div>
+</div>
+
+<header class="nav">
+  <a href="#" class="wordmark">
+    <svg class="mk-leaf" viewBox="0 0 24 24" fill="none"><path d="M12 21C12 21 4 16 4 9.5A5.5 5.5 0 0 1 12 4.6 5.5 5.5 0 0 1 20 9.5C20 16 12 21 12 21Z" fill="currentColor" opacity="0.25"/><path d="M12 21V9M12 13C9.5 13 7.5 11 7.5 8.5M12 11C14.5 11 16.5 9 16.5 6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Kova
+  </a>
+  <nav class="navlinks">
+    <a href="#multivitamin">Multivitamin</a>
+    <a href="#care">Personal Care</a>
+    <a href="#promise">Why Kova</a>
+  </nav>
+  <button class="bag-btn" id="bagOpen" aria-label="Open bag">
+    <span>Bag</span><span class="bag-count empty" id="bagCount">0</span>
+  </button>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <!-- Photo by nenadstojkovicart on Flickr (CC), via Openverse: bright morning wellness / stretching by window -->
+  <img src="images/hero.jpg" alt="A person stretching by a sunlit window in the morning" loading="eager">
+  <div class="hero-inner">
+    <span class="hero-eyebrow">Daily Wellness & Personal Care</span>
+    <h1>The basics, done well.<br><span class="line2">Every day.</span></h1>
+    <p>A short, honest set of everyday health and personal-care essentials. Start with our once-daily Daily Multivitamin, then add the few good devices you reach for each day.</p>
+    <div class="hero-cta">
+      <a href="#multivitamin" class="btn btn-primary">Meet the Multivitamin</a>
+      <a href="#care" class="btn btn-ghost">Shop Personal Care</a>
+    </div>
+  </div>
+</section>
+
+<!-- DAILY MULTIVITAMIN SPOTLIGHT -->
+<section class="spotlight" id="multivitamin">
+  <div class="spot-grid">
+    <div class="spot-imgwrap reveal">
+      <!-- Studio product render generated via fal.ai (flux/schnell), unlabeled, no trademark -->
+      <img src="images/multivitamin.png" alt="Kova Daily Multivitamin bottle with tablets">
+    </div>
+    <div class="reveal">
+      <span class="spot-kicker">The Daily Foundation</span>
+      <h2 class="spot-title">Daily Multivitamin</h2>
+      <p class="spot-lead">A once-daily foundation that supports everyday energy, immunity, and wellbeing. One simple step you can keep, on the busy mornings and the slow ones.</p>
+      <ul class="spot-benefits">
+        <li>Supports everyday energy and a steady morning</li>
+        <li>Supports immune health and overall wellbeing</li>
+        <li>A single, easy step in your daily routine</li>
+      </ul>
+      <p class="spot-ing"><strong>Inside:</strong> Vitamin D3 · Vitamin B12 · Vitamin C · Magnesium · Zinc · Folate.</p>
+      <div class="spot-price" id="spotPrice">$240 <span>/ 3 bottles</span></div>
+      <div class="spot-actions" id="spotTiers" style="margin-top:18px;">
+        <button class="btn btn-pack" data-tier="1">1 Bottle, $149</button>
+        <button class="btn btn-pack" data-tier="2">2 Bottles, $180</button>
+        <button class="btn btn-primary" data-tier="3">3 Bottles, $240</button>
+      </div>
+      <div class="spot-actions" style="margin-top:14px;">
+        <button class="btn btn-primary" id="spotAdd">Add 3 Bottles, $240</button>
+      </div>
+      <p class="spot-disc">A dietary supplement. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before use, especially if pregnant, nursing, or taking medication.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PERSONAL CARE FILMSTRIP -->
+<section class="section strips-section" id="care">
+  <div class="sec-head">
+    <div>
+      <p class="sec-kicker">Filmstrip · Everyday Devices</p>
+      <h2 class="sec-title">Personal Care</h2>
+    </div>
+    <div class="strip-hint">Scroll <span class="arrow">→</span></div>
+  </div>
+  <div class="strip-wrap">
+    <div class="strip" id="stripCare"></div>
+  </div>
+</section>
+
+<!-- PROMISE TRIO -->
+<section class="section promise" id="promise">
+  <div class="sec-head" style="margin-bottom: clamp(28px,4vw,44px);">
+    <div>
+      <p class="sec-kicker">Why Kova</p>
+      <h2 class="sec-title">Honest, every day.</h2>
+    </div>
+  </div>
+  <div class="promise-inner">
+    <div class="promise-item reveal">
+      <span class="pno">01</span>
+      <h4>A short, real shelf</h4>
+      <p>We carry the few things worth keeping in the cabinet: a daily multivitamin and a small set of everyday personal-care devices. No filler, no fifty versions of the same thing.</p>
+    </div>
+    <div class="promise-item reveal">
+      <span class="pno">02</span>
+      <h4>Plain about what's inside</h4>
+      <p>We name every ingredient and keep our claims simple. Our supplements support everyday wellness, and we never say they treat or cure anything. The label and the website say the same thing.</p>
+    </div>
+    <div class="promise-item reveal">
+      <span class="pno">03</span>
+      <h4>Easy to live with</h4>
+      <p>Free US shipping over $100, a flat $7.99 below it, and 30 days to send something back. Questions go to a real person at help@kova.com.</p>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="section">
+  <div class="sec-head">
+    <div>
+      <p class="sec-kicker">From the cabinet</p>
+      <h2 class="sec-title">Daily notes</h2>
+    </div>
+    <p class="sec-note">A few notes from people who shop the set. Shared with permission.</p>
+  </div>
+  <div class="reviews">
+    <div class="review reveal">
+      <p>"The multivitamin is the one habit that actually stuck. One a day with breakfast, and I don't have to think about it. Simple."</p>
+      <div class="review-by">
+        <!-- Photo by avhell on Flickr (CC), via Openverse -->
+        <img src="images/face1.jpg" alt="Customer headshot">
+        <div><div class="rb-name">Hannah M.</div><div class="rb-meta">Verified buyer</div></div>
+      </div>
+    </div>
+    <div class="review reveal">
+      <p>"The cordless water flosser is small enough to live by the sink and easy to charge. It has quietly become part of the routine."</p>
+      <div class="review-by">
+        <!-- Photo by Tom Newby Photography on Flickr (CC), via Openverse -->
+        <img src="images/face2.jpg" alt="Customer headshot">
+        <div><div class="rb-name">Daniel R.</div><div class="rb-meta">Verified buyer</div></div>
+      </div>
+    </div>
+    <div class="review reveal">
+      <p>"The cleansing brush is gentle and easy to hold, and the mini massage gun is perfect after a long day at the desk. Both just work."</p>
+      <div class="review-by">
+        <!-- Photo by Jérôme on Flickr (CC), via Openverse -->
+        <img src="images/face3.jpg" alt="Customer headshot">
+        <div><div class="rb-name">Priya S.</div><div class="rb-meta">Verified buyer</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-grid">
+    <div>
+      <div class="foot-mark">
+        <svg class="mk-leaf" viewBox="0 0 24 24" fill="none"><path d="M12 21C12 21 4 16 4 9.5A5.5 5.5 0 0 1 12 4.6 5.5 5.5 0 0 1 20 9.5C20 16 12 21 12 21Z" fill="currentColor" opacity="0.25"/><path d="M12 21V9M12 13C9.5 13 7.5 11 7.5 8.5M12 11C14.5 11 16.5 9 16.5 6.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Kova
+      </div>
+      <p class="foot-blurb">Daily wellness and personal-care essentials. A once-daily multivitamin and a short, honest set of the basics. Free US shipping over $100.</p>
+    </div>
+    <div>
+      <p class="foot-h">Shop</p>
+      <ul class="foot-list">
+        <li><a href="#multivitamin">Daily Multivitamin</a></li>
+        <li><a href="#care">Personal Care</a></li>
+        <li><a href="#promise">Why Kova</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="foot-h">Help</p>
+      <ul class="foot-list">
+        <li><a href="shipping.html">Shipping</a></li>
+        <li><a href="returns.html">Returns</a></li>
+        <li><a href="mailto:help@kova.com">Contact</a></li>
+        <li><a href="tel:1231231234">123-123-1234</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="foot-h">Legal</p>
+      <ul class="foot-list">
+        <li><a href="terms.html">Terms</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+      </ul>
+    </div>
+  </div>
+  <p class="foot-disc">These statements have not been evaluated by the Food and Drug Administration. Kova products are not intended to diagnose, treat, cure, or prevent any disease. Consult your healthcare provider before use.</p>
+  <div class="foot-bottom">
+    <span>© <span id="year"></span> PLACEHOLDER LLC</span>
+    <span>123 Main Street, Placeholder, State 10101</span>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modalBg"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-hidden="true">
+  <button class="modal-close" id="modalClose" aria-label="Close">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.6"/></svg>
+  </button>
+  <div class="modal-img"><img id="modalImg" alt=""></div>
+  <div class="modal-info">
+    <div class="modal-kind" id="modalKind"></div>
+    <h3 class="modal-name" id="modalName"></h3>
+    <div class="modal-price" id="modalPrice"></div>
+    <p class="modal-desc" id="modalDesc"></p>
+    <div id="optWrap" hidden>
+      <div class="opt-label" id="optLabel">Size</div>
+      <div class="opts" id="opts"></div>
+    </div>
+    <p class="modal-supp-note" id="modalSuppNote" hidden>A dietary supplement. These statements have not been evaluated by the Food and Drug Administration. This product is not intended to diagnose, treat, cure, or prevent any disease.</p>
+    <button class="modal-add" id="modalAdd">Add to Bag</button>
+  </div>
+</div>
+
+<!-- CART -->
+<aside class="cart" id="cart" aria-hidden="true">
+  <div class="cart-header">
+    <h3 class="cart-title">Your Bag</h3>
+    <button class="cart-close" id="cartClose">Close</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-foot" id="cartFoot" hidden>
+    <div class="total-line"><span class="tl">Subtotal</span><span class="tv" id="cartTotal">$0</span></div>
+    <a href="checkout.html" class="cart-checkout">Checkout</a>
+    <p class="cart-hint">Shipping and tax calculated at checkout. Free US shipping over $100.</p>
+  </div>
+</aside>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PRODUCTS = [
+  { slug:'multivitamin', cat:'supplement', kind:'Daily Multivitamin', name:'Daily Multivitamin', price:240.00, img:'multivitamin.png', supplement:true,
+    desc:'A once-daily foundation that supports everyday energy, immunity, and wellbeing. One simple step you can keep on busy mornings and slow ones. Inside: Vitamin D3, Vitamin B12, Vitamin C, Magnesium, Zinc, and Folate. A dietary supplement, not intended to diagnose, treat, cure, or prevent any disease.' },
+
+  // Personal care gadgets
+  { slug:'brush', cat:'gadget', kind:'Cleansing Brush', name:'Sonic Facial Cleansing Brush', price:49.00, img:'brush.png',
+    desc:'A rechargeable sonic facial cleansing brush with a soft silicone head for a gentle daily cleanse. Comfortable to hold, easy to rinse, and simple to charge between uses. One device.' },
+  { slug:'ledmask', cat:'gadget', kind:'LED Therapy Mask', name:'LED Light Therapy Mask', price:129.00, img:'ledmask.png',
+    desc:'A wearable LED light therapy mask for a calm few minutes of at-home facial care. Lightweight, rechargeable, with simple on-device controls. One device.' },
+  { slug:'flosser', cat:'gadget', kind:'Water Flosser', name:'Cordless Water Flosser', price:45.00, img:'flosser.png',
+    desc:'A cordless water flosser with a refillable tank for an easy daily clean between brushing. Compact, rechargeable, and travel-friendly. One device.' },
+  { slug:'massagegun', cat:'gadget', kind:'Massage Gun', name:'Mini Percussion Massage Gun', price:89.00, img:'massagegun.png',
+    desc:'A mini percussion massage gun that fits in your hand and your bag. Quiet, rechargeable, with a soft head and a few speed settings for everyday recovery. One device.' },
+];
+
+const PRODUCTS_INDEX = Object.fromEntries(PRODUCTS.map(p => [p.slug, p]));
+// Standard supplement supply tiers for the Daily Multivitamin.
+const SUPP_TIERS = [
+  { id:'1', label:'1 Bottle',  price:149.00 },
+  { id:'2', label:'2 Bottles', price:180.00 },
+  { id:'3', label:'3 Bottles', price:240.00 },
+];
+const SUPP_DEFAULT = '3';
+const VARIANTS = {
+  multivitamin: { label: 'Supply', tiers: SUPP_TIERS, defaultId: SUPP_DEFAULT },
+};
+const STORAGE_KEY = 'kova_cart';
+
+function loadCart() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; } }
+function saveCart(c) { localStorage.setItem(STORAGE_KEY, JSON.stringify(c)); }
+let cart = loadCart();
+
+function fmt(n) { return '$' + n.toFixed(2).replace(/\.00$/, ''); }
+function cartTotal(c) { return c.reduce((s, l) => s + l.price * l.qty, 0); }
+
+// ─── Filmstrips ───
+function cardHTML(p) {
+  return `
+  <article class="pcard" data-slug="${p.slug}">
+    <div class="pcard-img">
+      <img src="images/${p.img}" alt="${p.name}" loading="lazy">
+      <span class="pcard-tag">${p.kind}</span>
+      <button class="pcard-add" type="button" data-quick="${p.slug}" aria-label="Quick add ${p.name}">+</button>
+    </div>
+    <div class="pcard-body">
+      <span class="pcard-kind">${p.kind}</span>
+      <h3 class="pcard-name">${p.name}</h3>
+      <p class="pcard-desc">${p.desc.split('.')[0]}.</p>
+      <div class="pcard-price">${fmt(p.price)}</div>
+    </div>
+  </article>`;
+}
+function renderStrips() {
+  document.getElementById('stripCare').innerHTML = PRODUCTS.filter(p => p.cat === 'gadget').map(cardHTML).join('');
+  document.querySelectorAll('.pcard').forEach(card => {
+    card.addEventListener('click', e => {
+      if (e.target.closest('[data-quick]')) return;
+      openModal(card.dataset.slug);
+    });
+  });
+  document.querySelectorAll('[data-quick]').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const p = PRODUCTS_INDEX[btn.dataset.quick];
+      if (VARIANTS[p.slug]) { openModal(p.slug); return; }
+      addToCart(p, null);
+      toast(`${p.name} added`);
+    });
+  });
+}
+
+// ─── Modal ───
+let modalProduct = null, modalOpt = null, modalTier = null;
+function openModal(slug) {
+  const p = PRODUCTS_INDEX[slug];
+  if (!p) return;
+  modalProduct = p; modalOpt = null; modalTier = null;
+  document.getElementById('modalImg').src = `images/${p.img}`;
+  document.getElementById('modalImg').alt = p.name;
+  document.getElementById('modalKind').textContent = p.kind;
+  document.getElementById('modalName').textContent = p.name;
+  document.getElementById('modalPrice').textContent = fmt(p.price);
+  document.getElementById('modalDesc').textContent = p.desc;
+  document.getElementById('modalSuppNote').hidden = !p.supplement;
+  const optWrap = document.getElementById('optWrap');
+  const opts = document.getElementById('opts');
+  const add = document.getElementById('modalAdd');
+  const v = VARIANTS[p.slug];
+  if (v && v.tiers) {
+    // Priced supply tiers (multivitamin).
+    optWrap.hidden = false;
+    document.getElementById('optLabel').textContent = v.label;
+    opts.innerHTML = v.tiers.map(t => `<button class="opt-chip" data-tier="${t.id}">${t.label} · ${fmt(t.price)}</button>`).join('');
+    const selectTier = (t, chip) => {
+      opts.querySelectorAll('.opt-chip').forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+      modalOpt = t.label;
+      modalTier = t;
+      document.getElementById('modalPrice').textContent = fmt(t.price);
+      add.disabled = false;
+      add.textContent = `Add ${t.label}, ${fmt(t.price)}`;
+    };
+    opts.querySelectorAll('.opt-chip').forEach(chip => {
+      const t = v.tiers.find(x => x.id === chip.dataset.tier);
+      chip.addEventListener('click', () => selectTier(t, chip));
+    });
+    const defChip = opts.querySelector(`.opt-chip[data-tier="${v.defaultId}"]`);
+    const defTier = v.tiers.find(x => x.id === v.defaultId);
+    if (defChip && defTier) selectTier(defTier, defChip);
+  } else {
+    optWrap.hidden = true;
+    add.disabled = false;
+    add.textContent = `Add to Bag, ${fmt(p.price)}`;
+  }
+  document.getElementById('modal').classList.add('open');
+  document.getElementById('modalBg').classList.add('open');
+  document.getElementById('modal').setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.getElementById('modalBg').classList.remove('open');
+  document.getElementById('modal').setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+}
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modalBg').addEventListener('click', closeModal);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeCart(); } });
+document.getElementById('modalAdd').addEventListener('click', () => {
+  if (!modalProduct) return;
+  if (VARIANTS[modalProduct.slug] && !modalOpt) return;
+  addToCart(modalProduct, modalOpt, modalTier ? modalTier.price : null);
+  closeModal();
+  toast(`${modalProduct.name}${modalOpt ? ' · ' + modalOpt : ''} added`);
+});
+
+// ─── Spotlight supplement tier selector ───
+(function() {
+  const tierWrap = document.getElementById('spotTiers');
+  const priceEl = document.getElementById('spotPrice');
+  const addBtn = document.getElementById('spotAdd');
+  if (!tierWrap || !addBtn) return;
+  let chosen = SUPP_TIERS.find(t => t.id === SUPP_DEFAULT);
+  function paint() {
+    tierWrap.querySelectorAll('[data-tier]').forEach(b => {
+      const on = b.dataset.tier === chosen.id;
+      b.classList.toggle('btn-primary', on);
+      b.classList.toggle('btn-pack', !on);
+    });
+    priceEl.innerHTML = `${fmt(chosen.price)} <span>/ ${chosen.label.toLowerCase()}</span>`;
+    addBtn.textContent = `Add ${chosen.label}, ${fmt(chosen.price)}`;
+  }
+  tierWrap.querySelectorAll('[data-tier]').forEach(b => {
+    b.addEventListener('click', () => {
+      chosen = SUPP_TIERS.find(t => t.id === b.dataset.tier);
+      paint();
+    });
+  });
+  addBtn.addEventListener('click', () => {
+    const p = PRODUCTS_INDEX['multivitamin'];
+    addToCart(p, chosen.label, chosen.price);
+    toast(`${p.name} · ${chosen.label} added`);
+  });
+  paint();
+})();
+
+// ─── Cart ───
+function addToCart(p, opt, priceOverride) {
+  const price = (priceOverride != null) ? priceOverride : p.price;
+  const existing = cart.find(l => l.slug === p.slug && l.opt === (opt || null));
+  if (existing) existing.qty += 1;
+  else cart.push({ slug: p.slug, name: p.name, price: price, opt: opt || null, qty: 1 });
+  saveCart(cart); renderCart(); openCart();
+}
+function removeLine(slug, opt) { cart = cart.filter(l => !(l.slug === slug && l.opt === opt)); saveCart(cart); renderCart(); }
+function changeQty(slug, opt, d) {
+  const l = cart.find(x => x.slug === slug && x.opt === opt);
+  if (!l) return;
+  l.qty = Math.max(0, l.qty + d);
+  if (l.qty === 0) cart = cart.filter(x => !(x.slug === slug && x.opt === opt));
+  saveCart(cart); renderCart();
+}
+function renderCart() {
+  const items = document.getElementById('cartItems');
+  const foot = document.getElementById('cartFoot');
+  const count = cart.reduce((s, l) => s + l.qty, 0);
+  const cc = document.getElementById('bagCount');
+  cc.textContent = count; cc.classList.toggle('empty', count === 0);
+  if (cart.length === 0) {
+    items.innerHTML = `<div class="cart-empty"><p>Your bag is empty.</p><span>Start with the daily multivitamin.</span></div>`;
+    foot.hidden = true; return;
+  }
+  items.innerHTML = cart.map(l => {
+    const p = PRODUCTS_INDEX[l.slug];
+    const meta = l.opt ? l.opt : (p ? p.kind : '');
+    return `
+    <div class="cart-line">
+      <div class="cart-line-img"><img src="images/${p ? p.img : ''}" alt="${l.name}"></div>
+      <div class="cart-line-info">
+        <div class="cart-line-top">
+          <div><div class="cart-line-name">${l.name}</div><div class="cart-line-meta">${meta}</div></div>
+          <div class="cart-line-price">${fmt(l.price * l.qty)}</div>
+        </div>
+        <div class="cart-line-bottom">
+          <div class="qty">
+            <button data-act="dec" data-slug="${l.slug}" data-opt="${l.opt || ''}">−</button>
+            <span>${l.qty}</span>
+            <button data-act="inc" data-slug="${l.slug}" data-opt="${l.opt || ''}">+</button>
+          </div>
+          <button class="cart-remove" data-act="rem" data-slug="${l.slug}" data-opt="${l.opt || ''}">Remove</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+  items.querySelectorAll('button[data-act]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const opt = btn.dataset.opt || null;
+      if (btn.dataset.act === 'inc') changeQty(btn.dataset.slug, opt, +1);
+      if (btn.dataset.act === 'dec') changeQty(btn.dataset.slug, opt, -1);
+      if (btn.dataset.act === 'rem') removeLine(btn.dataset.slug, opt);
+    });
+  });
+  document.getElementById('cartTotal').textContent = fmt(cartTotal(cart));
+  foot.hidden = false;
+}
+function openCart() { document.getElementById('cart').classList.add('open'); document.getElementById('cart').setAttribute('aria-hidden', 'false'); }
+function closeCart() { document.getElementById('cart').classList.remove('open'); document.getElementById('cart').setAttribute('aria-hidden', 'true'); }
+document.getElementById('bagOpen').addEventListener('click', openCart);
+document.getElementById('cartClose').addEventListener('click', closeCart);
+
+// ─── Toast ───
+let toastT;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.innerHTML = `<span class="ok">✓</span>${msg}`;
+  t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ─── Reveal ───
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); obs.unobserve(e.target); } });
+}, { threshold: 0.12, rootMargin: '0px 0px -50px 0px' });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// ─── Loud banner rotation ───
+(function() {
+  const msgs = document.querySelectorAll('.loud-msg');
+  if (msgs.length < 2) return;
+  let i = 0;
+  setInterval(() => { msgs[i].classList.remove('active'); i = (i + 1) % msgs.length; msgs[i].classList.add('active'); }, 3200);
+})();
+
+// ─── Init ───
+document.getElementById('year').textContent = new Date().getFullYear();
+renderStrips();
+renderCart();
+</script>
+</body>
+</html>
