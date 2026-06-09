@@ -136,7 +136,7 @@
 <div class="b-loud">
   <div class="b-loud-track">
     <span class="loud-msg active"><span class="dot"></span>Free Shipping on Orders Over $100</span>
-    <span class="loud-msg"><span class="dot"></span>Daily Multivitamin, 3 Bottles: $240</span>
+    <span class="loud-msg"><span class="dot"></span>Blood Flow, 3 Bottles: $240</span>
     <span class="loud-msg"><span class="dot"></span>Code KOV10 for 10% Off at Checkout</span>
     <span class="loud-msg"><span class="dot"></span>30-Day Returns on Every Order</span>
   </div>
@@ -278,7 +278,7 @@
 <script>
 const STORAGE_KEY = 'kova_cart';
 const PRODUCTS = [
-  { slug:'multivitamin', name:'Daily Multivitamin',             price:240.00, img:'multivitamin.png' },
+  { slug:'blood-flow', name:'Blood Flow', price:240.00, img:'blood-flow.png' },
   { slug:'brush',        name:'Sonic Facial Cleansing Brush',   price:49.00,  img:'brush.png' },
   { slug:'ledmask',      name:'LED Light Therapy Mask',         price:129.00, img:'ledmask.png' },
   { slug:'flosser',      name:'Cordless Water Flosser',         price:45.00,  img:'flosser.png' },
@@ -312,7 +312,7 @@ function renderSummary() {
   document.getElementById('summaryCount').textContent = count + (count === 1 ? ' item' : ' items');
 
   if (cart.length === 0) {
-    items.innerHTML = `<div class="summary-empty"><p>Your bag is empty.</p><span>Start with the daily multivitamin.</span><br><a href="index.html">Back to the shop</a></div>`;
+    items.innerHTML = `<div class="summary-empty"><p>Your bag is empty.</p><span>Start with Blood Flow.</span><br><a href="index.html">Back to the shop</a></div>`;
     totals.hidden = true; promoBlock.hidden = true;
     document.getElementById('payBtn').disabled = true;
     document.getElementById('payAmt').textContent = '$0';
